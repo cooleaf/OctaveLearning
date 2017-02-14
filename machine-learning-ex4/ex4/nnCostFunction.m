@@ -29,8 +29,10 @@ m = size(X, 1);
 J = 0;
 Theta1_grad = zeros(size(Theta1));
 Theta2_grad = zeros(size(Theta2));
+%
+%
 
-% ====================== YOUR CODE HERE ======================
+%% ====================== YOUR CODE HERE ======================
 % Instructions: You should complete the code by working through the
 %               following parts.
 %
@@ -67,7 +69,7 @@ J = -J/m;
 
 
 
-%
+%%
 % Part 2: Implement the backpropagation algorithm to compute the gradients
 %         Theta1_grad and Theta2_grad. You should return the partial derivatives of
 %         the cost function with respect to Theta1 and Theta2 in Theta1_grad and
@@ -82,8 +84,12 @@ J = -J/m;
 %         Hint: We recommend implementing backpropagation using a for-loop
 %               over the training examples if you are implementing it for the 
 %               first time.
+J = J + (sum(diag(Theta1(:,2:end) * Theta1(:,2:end)' )) ...
+    + sum(diag(Theta2(:,2:end) * Theta2(:,2:end)' ))) * lambda /(2*m);
 %
-% Part 3: Implement regularization with the cost function and gradients.
+
+
+%% Part 3: Implement regularization with the cost function and gradients.
 %
 %         Hint: You can implement this around the code for
 %               backpropagation. That is, you can compute the gradients for
@@ -91,21 +97,26 @@ J = -J/m;
 %               and Theta2_grad from Part 2.
 %
 
+D1 = zeros(size(Theta1));       %25*401
+D2 = zeros(size(Theta2));       %10x26
 
+for i = 1:m
+    a1 = [1 X(i, :)];       %1x401
+    z2 = a1 * Theta1';      %1x25
+    a2 = [1 sigmoid(z2)];   %1x26
+    z3 = a2 * Theta2';      %1x10
+    a3 = sigmoid(z3);       %1x10
+    
+    delta3 = a3 - Y(i, :);  %1x10
+    delta2 = delta3 * Theta2(:,2:end) .* sigmoidGradient(z2); %1x25
+    %delta2 = delta2(2:end);
+    D1(:,2:end) = D1(:,2:end) + delta2()' * a1(2:end);
+    D2(:,2:end) = D2(:,2:end) + delta3()' * a2(2:end);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+end
+    
+Theta1_grad = D1/m;
+Theta2_grad = D2/m;
 
 
 

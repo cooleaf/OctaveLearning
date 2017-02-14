@@ -19,6 +19,10 @@ W = zeros(L_out, 1 + L_in);
 % Note: The first column of W corresponds to the parameters for the bias unit
 %
 
+epsilon_init = sqrt(6)/sqrt(L_in + L_out);
+%fprintf('epsilon is %.7f\n', epsilon_init);
+W = rand(L_out, L_in + 1) * 2 * epsilon_init - epsilon_init;
+
 
 
 

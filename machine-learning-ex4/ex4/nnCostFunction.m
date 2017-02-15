@@ -51,6 +51,9 @@ z3 = zeros(1, num_labels);
 
 Y = zeros(m, num_labels);
 
+Delta1 = zeros(size(Theta1));       %25*401
+Delta2 = zeros(size(Theta2));       %10x26
+
 for i=1:m
     %yt = zeros(num_labels,1);
     %yt(y(i)) = 1;
@@ -63,6 +66,13 @@ for i=1:m
     a3 = sigmoid(z3);
     J = J + (log(a3) * yt + log(1-a3)*(1-yt));
     %fprintf('J=%.2f\n', J);
+    
+    delta3 = a3 - Y(i, :);  %1x10
+    delta2 = delta3 * Theta2(:,2:end) .* sigmoidGradient(z2); %1x25
+    %delta2 = delta2(2:end);
+    Delta1 = Delta1 + delta2' * a1(1:end);
+    Delta2 = Delta2 + delta3' * a2(1:end);
+    
 end
 
 J = -J/m;
@@ -96,27 +106,30 @@ J = J + (sum(diag(Theta1(:,2:end) * Theta1(:,2:end)' )) ...
 %               the regularization separately and then add them to Theta1_grad
 %               and Theta2_grad from Part 2.
 %
+% 
+% Delta1 = zeros(size(Theta1));       %25*401
+% Delta2 = zeros(size(Theta2));       %10x26
+% 
+% for i = 1:m
+%     a1 = [1 X(i, :)];       %1x401
+%     z2 = a1 * Theta1';      %1x25
+%     a2 = [1 sigmoid(z2)];   %1x26
+%     z3 = a2 * Theta2';      %1x10
+%     a3 = sigmoid(z3);       %1x10
+%     
+%     delta3 = a3 - Y(i, :);  %1x10
+%     delta2 = delta3 * Theta2(:,2:end) .* sigmoidGradient(z2); %1x25
+%     %delta2 = delta2(2:end);
+%     Delta1 = Delta1 + delta2' * a1(1:end);
+%     Delta2 = Delta2 + delta3' * a2(1:end);
+% 
+% end
 
-D1 = zeros(size(Theta1));       %25*401
-D2 = zeros(size(Theta2));       %10x26
-
-for i = 1:m
-    a1 = [1 X(i, :)];       %1x401
-    z2 = a1 * Theta1';      %1x25
-    a2 = [1 sigmoid(z2)];   %1x26
-    z3 = a2 * Theta2';      %1x10
-    a3 = sigmoid(z3);       %1x10
+Delta1 = Delta1 + [zeros(size(Theta1, 1), 1) Theta1(:, 2:end)] * lambda;
+Delta2 = Delta2 + [zeros(size(Theta2, 1), 1) Theta2(:, 2:end)] * lambda;
     
-    delta3 = a3 - Y(i, :);  %1x10
-    delta2 = delta3 * Theta2(:,2:end) .* sigmoidGradient(z2); %1x25
-    %delta2 = delta2(2:end);
-    D1(:,2:end) = D1(:,2:end) + delta2()' * a1(2:end);
-    D2(:,2:end) = D2(:,2:end) + delta3()' * a2(2:end);
-
-end
-    
-Theta1_grad = D1/m;
-Theta2_grad = D2/m;
+Theta1_grad = Delta1/m;
+Theta2_grad = Delta2/m;
 
 
 

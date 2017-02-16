@@ -49,15 +49,14 @@ a3 = zeros(1, num_labels);
 z2 = zeros(1, hidden_layer_size);
 z3 = zeros(1, num_labels);
 
-Y = zeros(m, num_labels);
+
+Y = bsxfun(@eq, y, 1:num_labels);
 
 Delta1 = zeros(size(Theta1));       %25*401
 Delta2 = zeros(size(Theta2));       %10x26
 
 for i=1:m
-    %yt = zeros(num_labels,1);
-    %yt(y(i)) = 1;
-    Y(i,y(i)) = 1; 
+
     yt = Y(i, :)';
     a1 = [1 X(i,:)];
     z2 = a1 * Theta1';

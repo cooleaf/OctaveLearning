@@ -52,27 +52,39 @@ z3 = zeros(1, num_labels);
 
 Y = bsxfun(@eq, y, 1:num_labels);
 
-Delta1 = zeros(size(Theta1));       %25*401
-Delta2 = zeros(size(Theta2));       %10x26
+% Delta1 = zeros(size(Theta1));       %25*401
+% Delta2 = zeros(size(Theta2));       %10x26
 
-for i=1:m
+% for i=1:m
+% 
+%     yt = Y(i, :)';
+%     a1 = [1 X(i,:)];
+%     z2 = a1 * Theta1';
+%     a2 = [1 sigmoid(z2)];
+%     z3 = a2 * Theta2';
+%     a3 = sigmoid(z3);
+%     J = J + (log(a3) * yt + log(1-a3)*(1-yt));
+%     %fprintf('J=%.2f\n', J);
+%     
+%     delta3 = a3 - Y(i, :);  %1x10
+%     delta2 = delta3 * Theta2(:,2:end) .* sigmoidGradient(z2); %1x25
+%     %delta2 = delta2(2:end);
+%     Delta1 = Delta1 + delta2' * a1(1:end);
+%     Delta2 = Delta2 + delta3' * a2(1:end);
+%     
+% end
 
-    yt = Y(i, :)';
-    a1 = [1 X(i,:)];
-    z2 = a1 * Theta1';
-    a2 = [1 sigmoid(z2)];
-    z3 = a2 * Theta2';
-    a3 = sigmoid(z3);
-    J = J + (log(a3) * yt + log(1-a3)*(1-yt));
-    %fprintf('J=%.2f\n', J);
-    
-    delta3 = a3 - Y(i, :);  %1x10
-    delta2 = delta3 * Theta2(:,2:end) .* sigmoidGradient(z2); %1x25
-    %delta2 = delta2(2:end);
-    Delta1 = Delta1 + delta2' * a1(1:end);
-    Delta2 = Delta2 + delta3' * a2(1:end);
-    
-end
+A1 = [ones(m,1), X];   %5000x401
+
+Z2 = A1 * Theta1';
+A2 = [ones(m,1) sigmoid(Z2) ];  %5000x26
+
+Z3 = A2 * Theta2';
+A3 = sigmoid(Z3);  %5000x10
+
+J = sum(dot(log(A3), Y, 2) + dot(log(1-A3), (1-Y), 2));
+
+
 
 J = -J/m;
 
@@ -106,23 +118,18 @@ J = J + (sum(diag(Theta1(:,2:end) * Theta1(:,2:end)' )) ...
 %               and Theta2_grad from Part 2.
 %
 % 
-% Delta1 = zeros(size(Theta1));       %25*401
-% Delta2 = zeros(size(Theta2));       %10x26
-% 
-% for i = 1:m
-%     a1 = [1 X(i, :)];       %1x401
-%     z2 = a1 * Theta1';      %1x25
-%     a2 = [1 sigmoid(z2)];   %1x26
-%     z3 = a2 * Theta2';      %1x10
-%     a3 = sigmoid(z3);       %1x10
-%     
-%     delta3 = a3 - Y(i, :);  %1x10
-%     delta2 = delta3 * Theta2(:,2:end) .* sigmoidGradient(z2); %1x25
-%     %delta2 = delta2(2:end);
-%     Delta1 = Delta1 + delta2' * a1(1:end);
-%     Delta2 = Delta2 + delta3' * a2(1:end);
-% 
-% end
+
+
+Delta1 = zeros(size(Theta1));       %25*401
+Delta2 = zeros(size(Theta2));       %10x26
+
+D3 = A3 - Y;  
+D2 = D3 * Theta2(:, 2:end) .* sigmoidGradient(Z2);
+
+Delta1 = D2' * A1;
+Delta2 = D3' * A2;
+
+
 
 Delta1 = Delta1 + [zeros(size(Theta1, 1), 1) Theta1(:, 2:end)] * lambda;
 Delta2 = Delta2 + [zeros(size(Theta2, 1), 1) Theta2(:, 2:end)] * lambda;

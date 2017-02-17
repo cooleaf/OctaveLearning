@@ -42,37 +42,8 @@ Theta2_grad = zeros(size(Theta2));
 %         computed in ex4.m
 
 
-a1 = zeros(1, input_layer_size + 1);
-a2 = zeros(1, hidden_layer_size + 1);
-a3 = zeros(1, num_labels);
+Y = double(bsxfun(@eq, y, 1:num_labels));
 
-z2 = zeros(1, hidden_layer_size);
-z3 = zeros(1, num_labels);
-
-
-Y = bsxfun(@eq, y, 1:num_labels);
-
-% Delta1 = zeros(size(Theta1));       %25*401
-% Delta2 = zeros(size(Theta2));       %10x26
-
-% for i=1:m
-% 
-%     yt = Y(i, :)';
-%     a1 = [1 X(i,:)];
-%     z2 = a1 * Theta1';
-%     a2 = [1 sigmoid(z2)];
-%     z3 = a2 * Theta2';
-%     a3 = sigmoid(z3);
-%     J = J + (log(a3) * yt + log(1-a3)*(1-yt));
-%     %fprintf('J=%.2f\n', J);
-%     
-%     delta3 = a3 - Y(i, :);  %1x10
-%     delta2 = delta3 * Theta2(:,2:end) .* sigmoidGradient(z2); %1x25
-%     %delta2 = delta2(2:end);
-%     Delta1 = Delta1 + delta2' * a1(1:end);
-%     Delta2 = Delta2 + delta3' * a2(1:end);
-%     
-% end
 
 A1 = [ones(m,1), X];   %5000x401
 
@@ -82,9 +53,10 @@ A2 = [ones(m,1) sigmoid(Z2) ];  %5000x26
 Z3 = A2 * Theta2';
 A3 = sigmoid(Z3);  %5000x10
 
+% work on matlab
 J = sum(dot(log(A3), Y, 2) + dot(log(1-A3), (1-Y), 2));
-
-
+% work on matlab and octave, but slow than dot function.
+% J = sum(diag( (log(A3) * Y' + log(1-A3)*(1-Y)')));
 
 J = -J/m;
 
@@ -128,8 +100,6 @@ D2 = D3 * Theta2(:, 2:end) .* sigmoidGradient(Z2);
 
 Delta1 = D2' * A1;
 Delta2 = D3' * A2;
-
-
 
 Delta1 = Delta1 + [zeros(size(Theta1, 1), 1) Theta1(:, 2:end)] * lambda;
 Delta2 = Delta2 + [zeros(size(Theta2, 1), 1) Theta2(:, 2:end)] * lambda;

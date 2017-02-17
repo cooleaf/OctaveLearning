@@ -77,8 +77,11 @@ J = -J/m;
 %         Hint: We recommend implementing backpropagation using a for-loop
 %               over the training examples if you are implementing it for the 
 %               first time.
-J = J + (sum(diag(Theta1(:,2:end) * Theta1(:,2:end)' )) ...
-    + sum(diag(Theta2(:,2:end) * Theta2(:,2:end)' ))) * lambda /(2*m);
+% J = J + (sum(diag(Theta1(:,2:end) * Theta1(:,2:end)' )) ...
+%     + sum(diag(Theta2(:,2:end) * Theta2(:,2:end)' ))) * lambda /(2*m);
+
+J = J + ( sum(sum(Theta1(:,2:end).^2)) + sum(sum(Theta2(:,2:end).^2))) * lambda /(2*m);
+
 %
 
 

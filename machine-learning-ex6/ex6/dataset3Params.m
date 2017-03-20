@@ -24,7 +24,7 @@ sigma = 0.3;
 %
 
 
-
+model = svmTrain(X, Y C, @gaussianKernel, 1e-3, 20); 
 
 
 

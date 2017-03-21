@@ -22,12 +22,25 @@ sigma = 0.3;
 %  Note: You can compute the prediction error using 
 %        mean(double(predictions ~= yval))
 %
+searchList = [0.01 0.03 0.1 0.3 1 3 10 30] 
 
+minError = Inf;
 
-model = svmTrain(X, Y C, @gaussianKernel, 1e-3, 20); 
-
-
-
+for tempC = searchList
+    for tempSigma = searchList
+        model = svmTrain(X, y, tempC, @(x1,x2)gaussianKernel(x1, x2, tempSigma))
+        
+        predictions = svmPredict(model, Xval);
+        
+        error = mean(double(predictions ~= yval));
+        if error < minError
+            minError = error;
+            C = tempC;
+            sigma = tempSigma;
+        end
+    end
+    
+end
 
 % =========================================================================
 

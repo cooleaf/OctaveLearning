@@ -21,6 +21,16 @@ idx = zeros(size(X,1), 1);
 % Note: You can use a for-loop over the examples to compute this.
 %
 
+for i = 1: size(X,1)
+    x = X(i, :);
+    d = (x - centroids) .^ 2; % culculate the |x-c|^2,  K x 1
+    
+    dt = sum(d, 2);  % get the distance for x to each centroid  1 X K
+    
+    idx(i,:) = find(dt == min(min(dt)));
+    
+end 
+
 
 
 

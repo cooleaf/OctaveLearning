@@ -27,7 +27,9 @@ for i = 1: size(X,1)
     
     dt = sum(d, 2);  % get the distance for x to each centroid  1 X K
     
-    idx(i,:) = find(dt == min(min(dt)));
+    
+    [r, c] = find(dt == (min(dt)));
+    idx(i, 1) = r(1);
     
 end 
 
